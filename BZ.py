@@ -11,9 +11,11 @@ Options:
 
 import sys
 import re
+import os 
 from docopt import docopt
 import numpy as np
 from scipy.constants import *
+import matplotlib as mpl
 import matplotlib.pyplot as plt
 import matplotlib.quiver as qv
 from mpl_toolkits.mplot3d import Axes3D
@@ -260,14 +262,26 @@ def kpath_plot(ax, kpath: np.ndarray, kpath_name=[]):
         else: ax.text(kp[0], kp[1], kp[2], "k{}".format(i), \
                       c='black', va='bottom', zorder=100)
 
+def is_under_ssh_connection():
+    # The environment variable `SSH_CONNECTION` exists only in the SSH session.
+    # https://qiita.com/take_me/items/f91a3ffcee4c103a9a03
+    return 'SSH_CONNECTION' in os.environ.keys()
+
 
 if __name__ == '__main__':
     args = docopt(__doc__)
-    #----- Default Font -----#
-    plt.rcParams["font.serif"] = "Times New Roman"
-    plt.rcParams["font.family"] = "serif"
-    plt.rcParams["mathtext.fontset"] = "cm"   #texfont
-    plt.rcParams['font.size']=12
+
+    if is_under_ssh_connection(): 
+        mpl.use('TkAgg')
+        #----- Default Font in remote -----#
+        plt.rcParams["mathtext.fontset"] = "cm"   #texfont
+        plt.rcParams['font.size']=12
+    else :
+        #----- Default Font in local -----#
+        plt.rcParams["font.serif"] = "Times New Roman"
+        plt.rcParams["font.family"] = "serif"
+        plt.rcParams["mathtext.fontset"] = "cm"   #texfont
+        plt.rcParams['font.size']=12
 
     #--- figとaxesの作成 ---#
     fig = plt.figure(figsize=(cminch(20),cminch(18)))
@@ -277,8 +291,12 @@ if __name__ == '__main__':
     #--- BZのplot ---#
     bz = BZ_input(filename=args['<file>'])
     BZ_plot(ax, bz.kcell)
-    print("lattice vectors:\n{0[0]}\n{0[1]}\n{0[2]}\n".format(bz.cell.tolist()))
-    print("reciprocal lattice vectors:\n{0[0]}\n{0[1]}\n{0[2]}".format(bz.kcell.tolist()))
+    print("lattice vectors:")
+    for cl in bz.cell.tolist():
+        print("[ {0[0]:.6f}, {0[1]:.6f}, {0[2]:.6f} ]".format(cl))
+    print("\nreciprocal lattice vectors:")
+    for kl in bz.kcell.tolist():
+        print("[ {0[0]:.6f}, {0[1]:.6f}, {0[2]:.6f} ]".format(kl))
 
     #--- 逆格子ベクトルのplot ---#
     if args['--lcvec']:
@@ -288,9 +306,9 @@ if __name__ == '__main__':
     if len(bz.kpath) != 0 and args['--kpath']: 
         kpath_plot(ax, bz.kpath, bz.kpath_name)
         print("\nkpath:")
-        for i,kp in enumerate(bz.kpath.tolist()):
-            if len(bz.kpath_name) > i:
-                print("{}:\t{}".format(bz.kpath_name[i], kp))
-            else: print("k{}:\t{}".format(i, kp))
+        for i, kp in enumerate(bz.kpath.tolist()):
+            if len(bz.kpath_name) > i: kn = bz.kpath_name[i]
+            else:  kn = "k{}".format(i)
+            print("{0}:\t[ {1[0]:.6f}, {1[1]:.6f}, {1[2]:.6f} ]".format(kn, kp))
     plt.show()
 
