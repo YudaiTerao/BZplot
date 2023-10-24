@@ -30,3 +30,9 @@ defaultでssh先かローカルかを判定し、ssh先ならばバックエン�
 このため、<br>
 &emsp;ssh -Y remote名<br>
 でssh接続すればssh先でも使用できます。<br>
+
+## bzcmd 
+&emsp;source <ディレクトリのpath>/bzcmd<br>
+とbashrcなどに記述すれば任意ディレクトリで<br>
+&emsp;bz ファイル名 -p -v<br>
+で実行できます。<br>

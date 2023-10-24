@@ -1,0 +1,28 @@
+#!/bin/bash
+
+function bz(){
+DirPATH=$(cd $(dirname $BASH_SOURCE); pwd)
+flag=0
+case $# in
+'0' | '1' ) conda activate main
+            python3 $DirPATH/BZ.py $@ -p -v;;
+*         ) echo "bzcmd: argument false"; flag=1 ;;
+esac
+#if [ $flag -eq 1 ]; then exit 1; fi
+}
+
+function bzd(){
+DirPATH=$(cd $(dirname $BASH_SOURCE); pwd)
+flag=0
+case $# in
+'0' | '1' | '2' | '3' ) conda activate main
+                        python3 $DirPATH/BZ.py $@ ;;
+*                     ) echo "bzcmd: argument false"; flag=1 ;;
+esac
+#if [ $flag -eq 1 ]; then exit 1; fi
+}
+
+
+
+
+
