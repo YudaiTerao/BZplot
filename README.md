@@ -1,15 +1,25 @@
 # BZplot
-quantumESPRESSOやWannier90のinputからBrilluan zoneを3Dplotし、逆格子, kpathを表示する  
+quantumESPRESSOやWannier90のinputからBrilluan zoneを3Dplotし、逆格子, kpathを表示する<br><br>
 ![BZplot_sample](https://github.com/YudaiTerao/BZplot/assets/103988651/b9f19c1a-81b0-48b2-9ed6-98b62b49bdac)
+## インストール
+  zipを解凍し、setup.pyのある階層で<br>
+  pip&ensp; install&ensp; .<br>
+  のコマンドを実行すればbzコマンドが使えるようになります。<br>
+  アンインストール時は
+  pip&ensp; uninstall&ensp; BZplot
+
 ## 仕様
-  python3 BZ.py&ensp; -v&ensp; `Fe.scf.in`<br>
-  python3 BZ.py&ensp; -p&ensp; -v&ensp; `Fe.nscf.in`（bandplot用のnscf.in)<br>
-  python3 BZ.py&ensp; -p&ensp; -v&ensp; `Fe.win`<br>
-  <br>
-  -p|--kpath&ensp; :&ensp;&ensp;  kpathを表示する<br>
-  -v|--vec&ensp;   :&ensp;&ensp;  逆格子を表示する<br>
-  <br>
-- `nscf.in`のkpathをplotするとき、kpathのラベルは下のように&ensp;!&ensp;以下に書かれたものが反映されます。<br><br>
+  bz&ensp; `Fe.scf.in`<br>
+  bz&ensp; `Fe.nscf.in`（bandplot用のnscf.in)<br>
+  bz&ensp; `Fe.win`<br>
+  のコマンドでBurilluanZoneをmatplotlibで出力します。
+  <br><br>
+  ### Options
+  -p|--nokpath&ensp; :&ensp;&ensp;  kpathを表示しない<br>
+  -v|--nolcvec&ensp;   :&ensp;&ensp;  逆格子を表示しない<br>
+  <br><br>
+### Tips
+- `nscf.in`のkpathのラベルは下のように&ensp;!&ensp;以下に書かれたものが反映されます。<br><br>
 K_POINTS {crystal_b}<br>
 8<br>
     &emsp;0.0000000000&emsp;0.0000000000&emsp;0.0000000000&ensp;  20&ensp;  !&ensp;  G<br>
@@ -30,9 +40,3 @@ defaultでssh先かローカルかを判定し、ssh先ならばバックエン�
 このため、<br>
 &emsp;ssh -Y remote名<br>
 でssh接続すればssh先でも使用できます。<br>
-
-## bzcmd 
-&emsp;source <ディレクトリのpath>/bzcmd<br>
-とbashrcなどに記述すれば任意ディレクトリで<br>
-&emsp;bz ファイル名 -p -v<br>
-で実行できます。<br>

@@ -5,8 +5,8 @@ Usage:
 
 Options:
     <file>          file名
-    -p,--kpath      kpathをplot
-    -v,--lcvec      逆格子ベクトルをplot
+    -p,--nokpath      kpathをplotしない
+    -v,--nolcvec      逆格子ベクトルをplotしない
 """
 
 import sys
@@ -78,7 +78,7 @@ class BZ_input:
         else : 
             print("filename is wrong")
             sys.exit(1)
-        
+
     def read_nscf_in(self, file_nscf_in):
         with open(file_nscf_in, 'r') as fn:
             lines = [ line.rstrip(" ,\n") for line in fn.readlines() ]
@@ -267,8 +267,7 @@ def is_under_ssh_connection():
     # https://qiita.com/take_me/items/f91a3ffcee4c103a9a03
     return 'SSH_CONNECTION' in os.environ.keys()
 
-
-if __name__ == '__main__':
+def main():
     args = docopt(__doc__)
 
     if is_under_ssh_connection(): 
@@ -299,11 +298,11 @@ if __name__ == '__main__':
         print("[ {0[0]:.6f}, {0[1]:.6f}, {0[2]:.6f} ]".format(kl))
 
     #--- 逆格子ベクトルのplot ---#
-    if args['--lcvec']:
+    if args['--nolcvec'] != True:
         lcvec_plot(ax, bz.kcell)
 
     #--- kpathのplot ---#
-    if len(bz.kpath) != 0 and args['--kpath']: 
+    if len(bz.kpath) != 0 and args['--nokpath'] != True: 
         kpath_plot(ax, bz.kpath, bz.kpath_name)
         print("\nkpath:")
         for i, kp in enumerate(bz.kpath.tolist()):
