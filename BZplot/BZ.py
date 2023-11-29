@@ -75,6 +75,9 @@ class BZ_input:
         elif ".win" in filename: 
             self.cell, self.kcell, self.kpath, self.kpath_name \
                                  = self.read_win(filename)
+        elif "wt.in" in filename:
+            self.cell, self.kcell, self.kpath, self.kpath_name \
+                                 = self.read_wt_in(filename)
         else : 
             print("filename is wrong")
             sys.exit(1)
@@ -162,9 +165,43 @@ class BZ_input:
         kcell = 2*pi*(np.linalg.inv(cell).T)
 
         #----- kpathの単位変更 -----#
-        kpath = np.matmul(np.array(kpath), kcell)
+        if len(kpath) != 0 : kpath = np.matmul(np.array(kpath), kcell)
 
         return cell, kcell, kpath, kpath_name
+
+
+    def read_wt_in(self, file_wt_in):
+        with open(file_wt_in, 'r') as fwt:
+            lines = fwt.readlines()
+        kpath, kpath_name = [], []
+        for i, line in enumerate(lines):
+            if "LATTICE" in line:
+                cell = [ [ float(x) for x in lines[j].split()[:3] ] for j in range(i+2,i+5) ]
+                cell = np.array(cell)
+                if "bohr" in lines[i+1].lower(): bohrang(cell)
+            if "KPLANE_BULK" in line:
+                bc = np.array([ float(x) for x in lines[i+1].split()[:3] ])
+                bv = np.array([ [ float(x) for x in lines[i+j].split()[:3] ] for j in range(2,4) ])
+                kp0 = bc-(bv[0]+bv[1])/2
+                kp1 = kp0 + bv[0]
+                kp2 = kp1 + bv[1]
+                kp3 = kp0 + bv[1]
+                kpath = np.array([kp0, kp1, kp2, kp3, kp0])
+                kpath_name = ["O", "vec1", "vec1+2", "vec2", "O"]
+
+            if "KCUBE_BULK" in line:
+                bc = np.array([ float(x) for x in lines[i+1].split()[:3] ])
+                bv = np.array([ [ float(x) for x in lines[i+j].split()[:3] ] for j in range(2,5) ])
+                kpath, kpath_name = cube_path(bc, bv)
+
+        #----- kcellの計算 -----#
+        kcell = 2*pi*(np.linalg.inv(cell).T)
+
+        #----- kpathの単位変更 -----#
+        if len(kpath) != 0 : kpath = np.matmul(kpath, kcell)
+
+        return cell, kcell, kpath, kpath_name
+
 
     def kakunin(self):
     #kcellとcellの確認用
@@ -255,12 +292,36 @@ def kpath_plot(ax, kpath: np.ndarray, kpath_name=[]):
         ax.quiver(kpath[i-1][0], kpath[i-1][1], kpath[i-1][2], \
                   kpath[i][0]-kpath[i-1][0], kpath[i][1]-kpath[i-1][1], \
                   kpath[i][2]-kpath[i-1][2], arrow_length_ratio=0, color="red", lw=1.8)
-    for i,kp in enumerate(kpath):
+    for i, kp in enumerate(kpath):
         if len(kpath_name) > i:
             ax.text(kp[0], kp[1], kp[2], kpath_name[i].replace("G","$\Gamma$"), \
                     c='black', va='bottom', zorder=100)
         else: ax.text(kp[0], kp[1], kp[2], "k{}".format(i), \
                       c='black', va='bottom', zorder=100)
+
+def cube_path(origin: np.ndarray, base_vec: np.ndarray):
+    #三次元の六面体をplotするためのkpathを出力する。
+    #計算エリアのplot等に使う。
+
+    #原点(origin)と最も離れた対角にある点(X)を往復するような形で
+    #六面体の一筆書きを考える。
+    #通る道に重なりが多くあるため無駄は多い。
+    #(8辺のplotをするために6往復×3本=18本plotすることになる)
+    OtoX = [[0, 1, 2], [1, 0, 2], [2, 0, 1]]
+    XtoO = [[1, 2, 0], [0, 2, 1], [0, 1, 2]]
+    kpath = np.zeros((19, 3))
+    kpath_name = [" "] * 19
+    kpath[0] += origin
+    i = 1
+    for otx, xto in zip(OtoX, XtoO):
+        for ox in otx:
+            kpath[i] = kpath[i-1] + base_vec[ox]
+            i += 1
+        for xo in xto:
+            kpath[i] = kpath[i-1] - base_vec[xo]
+            i += 1
+    return kpath, kpath_name
+
 
 def is_under_ssh_connection():
     # The environment variable `SSH_CONNECTION` exists only in the SSH session.
@@ -283,9 +344,8 @@ def main():
         plt.rcParams['font.size']=12
 
     #--- figとaxesの作成 ---#
-    fig = plt.figure(figsize=(cminch(20),cminch(18)))
+    fig = plt.figure(figsize=(cminch(20),cminch(20)))
     ax = fig.add_axes([ 0.05, 0.05, 0.9, 0.9], projection='3d')
-    ax.set_aspect('equal')
 
     #--- BZのplot ---#
     bz = BZ_input(filename=args['<file>'])
@@ -309,5 +369,6 @@ def main():
             if len(bz.kpath_name) > i: kn = bz.kpath_name[i]
             else:  kn = "k{}".format(i)
             print("{0}:\t[ {1[0]:.6f}, {1[1]:.6f}, {1[2]:.6f} ]".format(kn, kp))
+    ax.set_box_aspect((1,1,1))
     plt.show()
 
