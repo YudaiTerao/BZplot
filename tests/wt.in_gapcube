@@ -1,0 +1,57 @@
+&TB_FILE
+    Hrfile = 'Mn3Al_hr.dat'
+    Package = 'QE'
+/
+
+&CONTROL
+    BulkGap_Cube_calc = T
+/
+
+&SYSTEM
+    NumOccupied = 25         ! NumOccupied
+    SOC = 1                  ! soc true
+    E_FERMI = 15.7857        ! e-fermi
+/
+
+&PARAMETERS
+    Nk1 = 301             ! number k points 
+    Nk2 = 301             ! number k points 
+    Nk3 = 301             ! number k points 
+    Gap_threshold = 0.04  ! threshold for GapCube output
+/
+
+LATTICE
+Angstrom
+    -2.90000000    0.00000000    2.90000000
+     0.00000000    2.90000000    2.90000000
+    -2.90000000    2.90000000    0.00000000
+
+ATOM_POSITIONS
+4                                  ! number of atoms for projectors
+Cartesian                          ! Direct or Cartisen coordinate
+    Al     0.00000000   0.00000000   0.00000000
+    Mn1    2.90000000   2.90000000   2.90000000
+    Mn2    1.45000000   1.45000000   1.45000000
+    Mn2    1.45000000   1.45000000   4.35000000
+
+PROJECTORS
+4 9 9 9
+Al   s   pz  px  py
+Mn1  s   pz  px  py  dz2 dxz dyz dx2-y2  dxy
+Mn2  s   pz  px  py  dz2 dxz dyz dx2-y2  dxy
+Mn2  s   pz  px  py  dz2 dxz dyz dx2-y2  dxy
+
+SURFACE            ! See doc for details
+ 0  0  1
+ 1  0  0
+ 0  1  0
+
+KCUBE_BULK
+-0.50 -0.50 -0.50
+ 1.00  0.00  0.00
+ 0.00  1.00  0.00
+ 0.00  0.00  1.00
+ 
+
+
+

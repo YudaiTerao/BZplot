@@ -4,7 +4,7 @@ quantumESPRESSOやWannier90のinputからBrilluan zoneを3Dplotし、逆格子, 
 ## インストール
   zipを解凍し、setup.pyのある階層で<br>
   pip&ensp; install&ensp; .<br>
-  のコマンドを実行すればbzコマンドが使えるようになります。<br>
+  のコマンドを実行すればbz,cellコマンドが使えるようになります。<br>
   アンインストール時は
   pip&ensp; uninstall&ensp; BZplot
 
@@ -12,11 +12,18 @@ quantumESPRESSOやWannier90のinputからBrilluan zoneを3Dplotし、逆格子, 
   bz&ensp; `Fe.scf.in`<br>
   bz&ensp; `Fe.nscf.in`（bandplot用のnscf.in)<br>
   bz&ensp; `Fe.win`<br>
-  のコマンドでBurilluanZoneをmatplotlibで出力します。
+  bz&ensp; `wt.in`<br>
+  のコマンドでBurilluanZoneをmatplotlibで出力します。<br><br>
+  cell&ensp; `Fe.scf.in`<br>
+  cell&ensp; `Fe.nscf.in`（bandplot用のnscf.in)<br>
+  cell&ensp; `Fe.win`<br>
+  cell&ensp; `wt.in`<br>
+  のコマンドで実空間のunit cellをmatplotlibで出力します。
   <br><br>
   ### Options
   -p|--nokpath&ensp; :&ensp;&ensp;  kpathを表示しない<br>
-  -v|--nolcvec&ensp;   :&ensp;&ensp;  逆格子を表示しない<br>
+  -v|--nolcvec&ensp; :&ensp;&ensp;  逆格子を表示しない<br>
+  -a|--aspect&ensp;  :&ensp;&ensp;  BZのplot時にaspect比を揃える
   <br><br>
 ### Tips
 - `nscf.in`のkpathのラベルは下のように&ensp;!&ensp;以下に書かれたものが反映されます。<br><br>

@@ -1,0 +1,51 @@
+&TB_FILE
+    Hrfile = 'CrFeS2_S_hr.dat'
+    Package = 'QE'
+/
+
+&CONTROL
+    BerryCurvature_calc = T
+/
+
+&SYSTEM
+    NumOccupied = 22         ! NumOccupied
+    SOC = 1                  ! soc true
+    E_FERMI = 12.8385        ! e-fermi
+/
+
+&PARAMETERS
+    Nk1 = 101             ! number k points 
+    Nk2 = 101             ! number k points 
+/
+
+LATTICE
+Angstrom
+   2.9843235   -1.7230000    0.0000000
+   0.0000000    3.4460000    0.0000000
+   0.0000000    0.0000000    5.7430000
+
+ATOM_POSITIONS
+4                               ! number of atoms for projectors
+Direct                          ! Direct or Cartisen coordinate
+Fe   0.000000000000000   0.000000000000000   0.000000000000000 
+Cr   0.000000000000000   0.000000000000000   0.500000000000000 
+ S   0.333333333333333   0.666666666666667   0.250000000000000 
+ S   0.666666666666667   0.333333333333333   0.750000000000000 
+
+PROJECTORS
+9 9 3 3
+Fe  s   pz  px  py  dz2 dxz dyz dx2-y2  dxy
+Cr  s   pz  px  py  dz2 dxz dyz dx2-y2  dxy
+S   pz  px  py
+S   pz  px  py
+
+SURFACE            ! See doc for details
+ 0  0  1
+ 1  0  0
+ 0  1  0
+
+KPLANE_BULK
+ 0.33333333333    0.33333333333   0.5000000000
+ 0.2500000000     0.00000000000   0.0000000000
+-0.1443375673     0.28867513459   0.0000000000
+
