@@ -287,11 +287,12 @@ def lcvec_plot(ax, cell):
         "b{0},[{1[0]:.2f},{1[1]:.2f},{1[2]:.2f}]".format(i+1,vec))
 
 def kpath_plot(ax, kpath: np.ndarray, kpath_name=[]):
-    for i in range(len(kpath)):
-        if i==0: continue
-        ax.quiver(kpath[i-1][0], kpath[i-1][1], kpath[i-1][2], \
-                  kpath[i][0]-kpath[i-1][0], kpath[i][1]-kpath[i-1][1], \
-                  kpath[i][2]-kpath[i-1][2], arrow_length_ratio=0, color="red", lw=1.8)
+    ax.plot(kpath[:, 0], kpath[:, 1], kpath[:, 2], color='red', lw=1.2)
+    #for i in range(len(kpath)):
+        #if i==0: continue
+        #ax.quiver(kpath[i-1][0], kpath[i-1][1], kpath[i-1][2], \
+        #          kpath[i][0]-kpath[i-1][0], kpath[i][1]-kpath[i-1][1], \
+        #          kpath[i][2]-kpath[i-1][2], arrow_length_ratio=0, color="red", lw=1.8)
     for i, kp in enumerate(kpath):
         if len(kpath_name) > i:
             ax.text(kp[0], kp[1], kp[2], kpath_name[i].replace("G","$\Gamma$"), \
