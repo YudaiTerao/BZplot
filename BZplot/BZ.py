@@ -334,7 +334,7 @@ def BZ_plot(ax, cell: np.ndarray, aspect=False):
             eval("ax.set_{}lim".format(axis))(-1*amax[i], amax[i])
         ax.set_box_aspect((1, amax[1]/amax[0], amax[2]/amax[0]))
 
-def cell_plot(ax, cell: np.ndarray, atom_frac, atom_name):
+def cell_plot(ax, fig, cell: np.ndarray, atom_frac, atom_name):
     clpath = cube_path(0.0, cell)
     ax.plot(clpath[:, 0], clpath[:, 1], clpath[:, 2], color='black', lw=1.0)
     amax, amin = [], []
@@ -393,8 +393,8 @@ def lcvec_plot(ax, cell):
         quiv = ax.quiver(0, 0, 0, vec[0], vec[1], vec[2], \
                         arrow_length_ratio=0.1, lw=1.2)
         quiv.set_color(Colorlist[i*2])
-        ax.text(vec[0], vec[1], vec[2], \
-        "b{0},[{1[0]:.2f},{1[1]:.2f},{1[2]:.2f}]".format(i+1,vec))
+        ax.text(vec[0]/2, vec[1]/2, vec[2]/2, \
+        "   b{0},[{1[0]:.2f},{1[1]:.2f},{1[2]:.2f}]".format(i+1,vec))
 
 def kpath_plot(ax, kpath: np.ndarray, kpath_name=[]):
     ax.plot(kpath[:, 0], kpath[:, 1], kpath[:, 2], color='red', lw=1.2)
@@ -502,8 +502,8 @@ def cellplot_main():
     fig = plt.figure(figsize=(cminch(20),cminch(20)))
     ax = fig.add_axes([ 0.05, 0.05, 0.9, 0.9], projection='3d')
 
-    cell_plot(ax, bz.cell, bz.atom_frac, bz.atom_name)
-    print("lattice vectors:")
+    cell_plot(ax, fig, bz.cell, bz.atom_frac, bz.atom_name)
+    print("\nlattice vectors:")
     for cl in bz.cell.tolist():
         print("[ {0[0]:.6f}, {0[1]:.6f}, {0[2]:.6f} ]".format(cl))
 
