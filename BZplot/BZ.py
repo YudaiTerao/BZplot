@@ -388,13 +388,18 @@ def cell_plot(ax, fig, cell: np.ndarray, atom_frac, atom_name):
         ballplot(ax, radius, ac[0], ac[1], ac[2], atom_dict[an])
         print("{0}:\t[ {1[0]:.6f}, {1[1]:.6f}, {1[2]:.6f} ]".format(an, ac))
 
-def lcvec_plot(ax, cell):
+def lcvec_plot(ax, cell, lbl_center=False):
     for i,vec in enumerate(cell):
         quiv = ax.quiver(0, 0, 0, vec[0], vec[1], vec[2], \
                         arrow_length_ratio=0.1, lw=1.2)
         quiv.set_color(Colorlist[i*2])
-        ax.text(vec[0]/2, vec[1]/2, vec[2]/2, \
-        "   b{0},[{1[0]:.2f},{1[1]:.2f},{1[2]:.2f}]".format(i+1,vec))
+        if lbl_center == True:
+            ax.text(vec[0]/2, vec[1]/2, vec[2]/2, \
+            "   b{0},[{1[0]:.2f},{1[1]:.2f},{1[2]:.2f}]".format(i+1,vec))
+        elif lbl_center == False:
+            ax.text(vec[0], vec[1], vec[2], \
+            "   b{0},[{1[0]:.2f},{1[1]:.2f},{1[2]:.2f}]".format(i+1,vec))
+
 
 def kpath_plot(ax, kpath: np.ndarray, kpath_name=[]):
     ax.plot(kpath[:, 0], kpath[:, 1], kpath[:, 2], color='red', lw=1.2)
@@ -509,7 +514,7 @@ def cellplot_main():
 
     #--- 格子ベクトルのplot ---#
     if op.lv_bool != True:
-        lcvec_plot(ax, bz.cell)
+        lcvec_plot(ax, bz.cell, lbl_center=True)
 
     plt.show()
 
