@@ -346,47 +346,62 @@ def cell_plot(ax, fig, cell: np.ndarray, atom_frac, atom_name):
         eval("ax.set_{}lim".format(axis))(amin[i], amax[i])
     ax.set_box_aspect((1, (amax[1]-amin[1])/(amax[0]-amin[0]), (amax[2]-amin[2])/(amax[0]-amin[0])))
 
-
+    ###### 各原子の色分け #####
     i, atom_dict = 0, {}
     for an in atom_name:
         if an not in atom_dict:
             atom_dict[an] = Colorlist[i]
             fig.text(0.05, 0.1+i*0.05, an, color = Colorlist[i], fontsize=20)
             i += 1
+    ###############
 
+    ##### 与えられた原子座標から  ##########################
+    ##### 実空間で等価な、最も原点に近い原子座標を取得 #####
     for i, atf in enumerate(atom_frac):
         for j, af in enumerate(atf):
-            if 0.9999 > af >= -0.0001: continue
+            if 0.9997 > af >= -0.0005: continue
             else:
-                if   af > 0.9999:
-                    new_af = af
-                    while new_af >= -0.0001 : new_af -= 1.0
-                elif af < - 0.0001: new_af = af
-                while new_af < -0.0001 : new_af += 1.0
+                new_af = af
+                if   af >= 0.9997:
+                    while new_af >= 0.9997: new_af -= 1.0000
+                elif af < -0.0005:
+                    while new_af < -0.0005: new_af += 1.0000
                 atom_frac[i][j]=new_af
+    ###############
 
+    ##### 原子の複製 #####
     natom_frac = atom_frac.copy()
     natom_name = atom_name.copy()
 
     for i, atf in enumerate(atom_frac):
+        #new_atfには複製された原子座標が追加される。
         new_atf = [ atf.copy() ]
+
         for j, af in enumerate(atf):
-            newadd = []
+        #複製は各軸ごとに行う。
+        #例えばx軸方向の複製では,new_atf内の原子のx座標が0.0の時
+        #格子ベクトル1つ分足したx座標が1.0の位置にも原子はあるはずである
+        #このx座標が1.0の原子をnew_atfに追加し、
+        #新しいnew_atfでy軸についても同じことを行う
+            add_atf = []
             for naf in new_atf :
-                cp_naf = naf.copy()
-                if 0.0001 >= af >= -0.0001:
+                if 0.0005 >= af >= -0.0005:
+                    cp_naf = naf.copy()
                     cp_naf[j] += 1.0
-                    newadd.append(cp_naf)
+                    add_atf.append(cp_naf)
                     natom_frac = np.append(natom_frac, cp_naf)
                     natom_name.append(atom_name[i])
-            for nad in newadd : new_atf.append(nad)
+            new_atf = new_atf + add_atf
 
     atom_coord = np.matmul(natom_frac.reshape([-1,3]), cell)
+    ###############
 
+    ##### 原子のplot #####
     radius = max([ amax[i]-amin[i] for i in range(3) ])/30
     for ac, an in zip(atom_coord, natom_name):
         ballplot(ax, radius, ac[0], ac[1], ac[2], atom_dict[an])
         print("{0}:\t[ {1[0]:.6f}, {1[1]:.6f}, {1[2]:.6f} ]".format(an, ac))
+    ###############
 
 def lcvec_plot(ax, cell, lbl_center=False):
     for i,vec in enumerate(cell):
