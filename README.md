@@ -2,7 +2,7 @@
 quantumESPRESSOやWannier90のinputからBrilluan zoneを3Dplotし、逆格子, kpathを表示する<br><br>
 ![BZplot_sample](https://github.com/YudaiTerao/BZplot/assets/103988651/b9f19c1a-81b0-48b2-9ed6-98b62b49bdac)
 ## インストール
-  zipを解凍し、setup.pyのある階層で<br>
+  リポジトリをcloneし、setup.pyのある階層で<br>
   pip&ensp; install&ensp; .<br>
   のコマンドを実行すればbz,cellコマンドが使えるようになります。<br>
   アンインストール時は
