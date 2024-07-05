@@ -37,13 +37,10 @@ def manual_config():
   #                   [0.5, 0.5, 0.0]])
   #  cell = lc * .cell
     #ibrav指定も可能
-    cell = ibravcell(3)  
-
+    cell = ibravcell(3)
     kcell = 2*pi*(np.linalg.inv(cell).T)
-    kpath=np.empty(0)
-    kpath_name=[]
-    atom_name=[]
-    atom_frac=[]
+    kpath_name, atom_name = [], []
+    kpath, atom_frac = np.empty(0), np.empty(0)
     return cell, kcell, kpath, kpath_name, atom_frac, atom_name
 
 def ibravcell(ibrav: int, lc=1, lc2=1, lc3=1):
@@ -66,83 +63,110 @@ def ibravcell(ibrav: int, lc=1, lc2=1, lc3=1):
 #####################################################
 
 class BZ_input:
-    def __init__(self, filename=""):
+    def __init__(self, filename: str = ""):
         #self.cell: 実空間の格子ベクトル
         #self.kcell: k空間の逆格子ベクトル
         if filename == None: 
             self.cell, self.kcell, self.kpath, self.kpath_name, \
             self.atom_frac, self.atom_name = manual_config()
-        elif ".scf.in" in filename or ".nscf.in" in filename:
+        elif re.match(r'^.*scf.in$', filename):
             self.cell, self.kcell, self.kpath, self.kpath_name, \
             self.atom_frac, self.atom_name = self.read_nscf_in(filename)
-        elif ".win" in filename or "_win" in filename:
+        elif re.match(r'^.*win$', filename):
             self.cell, self.kcell, self.kpath, self.kpath_name, \
             self.atom_frac, self.atom_name = self.read_win(filename)
-        elif "wt.in" in filename:
+        elif re.match(r'^.*wt.in$', filename) or \
+             re.match(r'^.*weyl.in', filename):
             self.cell, self.kcell, self.kpath, self.kpath_name, \
             self.atom_frac, self.atom_name = self.read_wt_in(filename)
         else : 
-            print("filename is wrong")
-            sys.exit(1)
+            print("BZplot.BZ_input: filename is wrong")
+            sys.exit(0)
 
     def read_nscf_in(self, file_nscf_in):
         with open(file_nscf_in, 'r') as fn:
-            lines = [ line.rstrip(" ,\n") for line in fn.readlines() ]
-        kpath, kpath_name, atom_frac, atom_name = [], [], [], []
+            #改行や行頭,行末スペース、行末のカンマやコロン、タブ、コメント行を消去
+            lines = [ re.sub('^!.*$', '', re.sub('^\s+', '', re.sub('[\,\.]?\s+$', '', l))) for l in fn.readlines() ]
+        ibrav = 100
+        lc, lc2, lc3 = -1, -1, -1
+        kpath_name, atom_name = [], []
+        kpath, atom_frac = np.empty(0), np.empty(0)
         BZ_base, kp_method = "", ""
 
-        for i,line in enumerate(lines):
-            lline = line.lower().strip().replace(" ", "") #行全体を小文字化し空白等消去
-            if 'ibrav' in lline:
+        for i, line in enumerate(lines):
+            # lwはlineを小文字に統一し、コメント,空白を削除したもの
+            lw = re.sub('\s', '', line).lower().split('!')[0]
+            # ibravは必ず整数, 整数でなければ読み込まない
+            if re.match(r'^ibrav=-?[0-9]+$', lw):
                 ibrav=int(line.split("=")[1])
-            #matchを使うことで行頭のa=のみを判別
-            elif re.match('a=', lline ):
-                lc = float(line.split("=")[1])
-            elif 'celldm(1)' in lline:
-                lc = bohrang(float(line.split("=")[1]))
-            elif re.match('b=', lline ):
-                lc2 = float(line.split("=")[1])
-            elif 'celldm(2)' in lline:
-                lc2 = bohrang(float(line.split("=")[1]))
-            elif re.match('c=', lline ):
-                lc3 = float(line.split("=")[1])
-            elif 'celldm(3)' in lline:
-                lc3 = bohrang(float(line.split("=")[1]))
-            elif 'CELL_PARAMETERS' in line:
-                BZ_base = lline
-                cell = np.array([ l.split()[:3] for l in lines[i+1:i+4] ], dtype='f8')
-            elif re.match('nat=', lline ):
+                for line2 in lines:
+                    lw2 = re.sub('\s', '', line2).lower().split('!')[0]
+                    #a, b, c, celldmは必ず実数, 実数でなければ読み込まない
+                    if   re.match(r'^a=-?[0-9]+\.?[0-9]*$', lw2):
+                        lc  = float(line2.split("=")[1])
+                    elif re.match(r'^b=-?[0-9]+\.?[0-9]*$', lw2):
+                        lc2 = float(line2.split("=")[1])
+                    elif re.match(r'^c=-?[0-9]+\.?[0-9]*$', lw2):
+                        lc3 = float(line2.split("=")[1])
+                    elif re.match(r'^celldm\(1\)=-?[0-9]+\.?[0-9]*$', lw2):
+                        lc  = bohrang(float(line2.split("=")[1]))
+                    elif re.match(r'^celldm\(2\)=-?[0-9]+\.?[0-9]*$', lw2):
+                        lc2 = bohrang(float(line2.split("=")[1]))
+                    elif re.match(r'^celldm\(3\)=-?[0-9]+\.?[0-9]*$', lw2):
+                        lc3 = bohrang(float(line2.split("=")[1]))
+
+            elif re.match(r'^cell_parameters.+$', lw):
+                BZ_base = re.sub(r'^cell_parameters', '', lw)
+                cell = np.array([ l.split()[:3] for l in lines[i+1:i+4] ], dtype='float64')
+            elif re.match(r'^nat=[0-9]+$', lw):
                 atom_num = int(line.split("=")[1])
-            elif 'ATOMIC_POSITIONS' in line:
-                atom_base = lline
+            elif re.match(r'^atomic_positions.+$', lw):
+                atom_base = re.sub(r'^atomic_positions', '', lw)
                 atom_name = [ l.split()[0] for l in lines[i+1:i+1+atom_num]]
-                atom_frac = np.array([ l.split()[1:4] for l in lines[i+1:i+1+atom_num]], dtype='f8')
-            elif 'K_POINTS' in line:
-                kp_method = lline
-                if 'tpiba_b' in lline or 'crystal_b' in lline:
+                atom_frac = np.array([ l.split()[1:4] for l in lines[i+1:i+1+atom_num]], dtype='float64')
+            elif re.match(r'^k_points.+$', lw):
+                kp_method = re.sub(r'^k_points', '', lw)
+                if 'tpiba_b' in kp_method or 'crystal_b' in kp_method:
                     kp_num = int(lines[i+1])
-                    kpath = np.array([ l.split()[:3] for l in lines[i+2:i+2+kp_num] ], dtype='f8')
+                    kpath = np.array([ l.split()[:3] for l in lines[i+2:i+2+kp_num] ], dtype='float64')
                     for j in range(i+2, i+2+kp_num):
-                        if len(line.split()) > 4:
-                            kpath_name.append(lines[j].replace("!"," ").split()[-1])
+                        if len(lines[j].split('!')) == 2:
+                            kpath_name.append(lines[j].split('!')[1])
 
         #----- cellの単位変更 -----#
         #cell : 実空間の基底ベクトル,単位はangstromに統一
+        #cellに関する部分は必ず出力に必要なため、errorの条件分岐を書いている
+        lc_flag = 0
         if ibrav == 0:
-            if   'alat' in BZ_base: cell = cell*lc
-            elif 'bohr' in BZ_base: cell = bohrang(cell)
+            if 'alat' in BZ_base: 
+                if lc == -1 : lc_flag = 1
+                else: cell = cell * lc
+            elif 'bohr'     in BZ_base: cell = bohrang(cell)
             elif 'angstrom' in BZ_base: pass
-        elif 1 <= ibrav <= 3 or ibrav == -3: cell = ibravcell(ibrav, lc=lc)
-        elif ibrav == 4: cell = ibravcell(ibrav, lc=lc, lc3=lc3)
+            else: 
+                print("read_scf_in: CELL_PARAMETERS is wrong")
+                sys.exit(0)
+        elif 1 <= ibrav <= 3 or ibrav == -3: 
+            if lc == -1: lc_flag = 1
+            else: cell = ibravcell(ibrav, lc=lc)
+        elif ibrav == 4:
+            if lc == -1 or lc3 == -1: lc_flag = 1
+            else: cell = ibravcell(ibrav, lc=lc, lc3=lc3)
+        else:
+            print("read_scf_in: ibrav not found or not support number")
+            sys.exit(0)
+        if lc_flag == 1:
+            print("read_scf_in : lattice constant not found")
+            sys.exit(0)
 
         #----- kcellの計算 -----#
         #kcell : K空間の基底ベクトル
         #kcellは実空間の基底ベクトルの逆行列の転置*2pi
-        kcell = 2*pi*(np.linalg.inv(cell).T)
+        kcell = 2 * pi * (np.linalg.inv(cell).T)
 
         #----- kpathの単位変更 -----#
         if 'tpiba_b' in kp_method:
-            kpath = kpath*2*pi/lc
+            kpath = kpath * 2 * pi / lc
         elif 'crystal_b' in kp_method:
             kpath = np.matmul(kpath, kcell)
 
@@ -157,37 +181,57 @@ class BZ_input:
 
         return cell, kcell, kpath, kpath_name, atom_frac, atom_name
 
+
     def read_win(self, file_win):
+        kpath_name, atom_name = [], []
+        kpath, atom_frac = np.empty(0), np.empty(0)
+        BZ_base, atom_base = "", ""
+        cell_flag = 0
+
         with open(file_win, 'r') as fw:
-            lines = fw.readlines()
-        kpath, kpath_name, atom_frac, atom_name = [], [], [], []
+            #改行や行頭,行末スペース、タブ、コメントを消去
+            lines = [ re.sub('^!.*$', '', re.sub('^\s+', '', re.sub('\s+$', '', l))).split('!')[0] for l in fw.readlines() ]
 
         for i, line in enumerate(lines):
-            lline = line.lower()
-            if 'begin unit_cell_cart' in lline:
+            # lwはlineを小文字に統一したもの
+            lw = line.lower()
+
+            if re.match(r'^begin\s+unit_cell_cart$', lw):
                 BZ_base = lines[i+1]
-                cell = np.array([ l.split()[:4] for l in lines[i+2:i+5] ], dtype='f8')
-            elif 'begin kpoint_path' in lline:
-                j = 1
-                while 'end kpoint_path' not in lines[i+j].lower():
+                cell = np.array([ l.split() for l in lines[i+2:i+5] ], \
+                                dtype='float64')
+                if cell.shape == (3, 3): cell_flag = 1
+            elif re.match(r'^begin\s+kpoint_path$', lw):
+                j, kp = 1, []
+                while re.match(r'^end\s+kpoint_path$', lines[i+j].lower()) is None:
                     kpath_name.append(lines[i+j].split()[0])
-                    kpath.append(lines[i+j].split()[1:4])
+                    kp.append(lines[i+j].split()[1:4])
                     j = j + 1
+                    if i + j >= len(lines): 
+                        print("read_win: \'end kpoint_path\' not found")
+                        sys.exit(0)
                 kpath_name.append(lines[i+j-1].split()[-4])
-                kpath.append(lines[i+j-1].split()[-3:])
-                kpath = np.array(kpath, dtype='f8')
-            elif 'begin atoms_frac' in lline or 'begin atoms_cart' in lline:
-                atom_base = lline
-                j = 1
-                while 'end atoms_' not in lines[i+j].lower():
+                kp.append(lines[i+j-1].split()[-3:])
+                kpath = np.array(kp, dtype='float64')
+            elif re.match(r'^begin\s+atoms_frac$', lw) or \
+                 re.match(r'^begin\s+atoms_cart$', lw):
+                atom_base = lw.split('_')[1]
+                j, af = 1, []
+                while re.match(r'^end\s+atoms_[a-z]{4}$', lines[i+j].lower()) is None:
                     atom_name.append(lines[i+j].split()[0])
-                    atom_frac.append(lines[i+j].split()[1:4])
+                    af.append(lines[i+j].split()[1:4])
                     j = j + 1
-                atom_frac = np.array(atom_frac, dtype='f8')
+                    if i + j >= len(lines): 
+                        print("read_win: \'end atoms_\' not found")
+                        sys.exit(0)
+                atom_frac = np.array(af, dtype='float64')
 
         #----- cellの単位変更 -----#
         if   'ang'  in BZ_base: pass
         elif 'bohr' in BZ_base: cell = bohrang(cell)
+        if ( 'ang' not in BZ_base and 'bohr' not in BZ_base ) or cell_flag == 0:
+            print("read_win: unit_cell_cart is wrong")
+            sys.exit(0)
 
         #----- kcellの計算 -----#
         kcell = 2*pi*(np.linalg.inv(cell).T)
@@ -196,8 +240,8 @@ class BZ_input:
         if len(kpath) != 0 : kpath = np.matmul(kpath, kcell)
 
         #----- atom_fracの単位変更 -----#
-        if   'atoms_frac' in atom_base : pass
-        elif 'atoms_cart' in atom_base : 
+        if   'frac' in atom_base : pass
+        elif 'cart' in atom_base :
             atom_frac = np.matmul( atom_frac, np.linalg.inv(cell) )
 
         return cell, kcell, kpath, kpath_name, atom_frac, atom_name

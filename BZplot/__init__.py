@@ -6,3 +6,4 @@ from BZplot.BZ import BZ_plot
 from BZplot.BZ import lcvec_plot
 from BZplot.BZ import kpath_plot
 
+__version__='1.2.0'
