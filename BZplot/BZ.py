@@ -517,15 +517,11 @@ class plotoption():
 
         if is_under_ssh_connection(): 
             mpl.use('TkAgg')
-            #----- Default Font in remote -----#
-            plt.rcParams["mathtext.fontset"] = "cm"   #texfont
-            plt.rcParams['font.size']=12
-        else :
-            #----- Default Font in local -----#
-            plt.rcParams["font.serif"] = "Times New Roman"
-            plt.rcParams["font.family"] = "serif"
-            plt.rcParams["mathtext.fontset"] = "cm"   #texfont
-            plt.rcParams['font.size']=12
+        #----- Default Font in local -----#
+        plt.rcParams["font.serif"] = ['Times New Roman'] + plt.rcParams["font.serif"]
+        plt.rcParams["font.family"] = "serif"
+        plt.rcParams["mathtext.fontset"] = "cm"   #texfont
+        plt.rcParams['font.size'] = 12
 
 def BZplot_main():
     op = plotoption()
