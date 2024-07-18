@@ -8,8 +8,16 @@ quantumESPRESSOやWannier90, WannierToolsのinputからBrilluan zoneや結晶構
   git clone https://github.com/YudaiTerao/BZplot.git
   pip install ./BZplot
   ```
-  必要なパッケージはsetup.pyのコメント内に書いてあるが、自動的にダウンロードしないようにしている。(anaconda環境などとの競合を避けるため。コメントを外せば自動的にpipでダウンロードされる)<br>
-  このため環境に合わせて足りないパッケージは導入する必要がある。<br>アンインストールは
+  必要なパッケージはsetup.pyのコメント内に書いてあるが、自動的にダウンロードしないようにしている。<br>
+  (anaconda環境などとの競合を避けるため。コメントを外せば自動的に必要なパッケージがpipでダウンロードされる(非推奨))<br>
+  このため環境に合わせて足りないパッケージは導入する必要がある。<br><br>
+  下記のどちらかのコマンドを実行して、Brilloan zoneまたは結晶格子が表示されればインストールは成功である。
+  ```
+  bz
+  cell
+  ```
+  
+  アンインストールは
   ```
   pip uninstall BZplot
   ```
