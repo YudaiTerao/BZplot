@@ -6,13 +6,14 @@ setup(
     version="2.0.0",
     author="Yudai Terao",
     author_email="terao.yudai.s4@dc.tohoku.ac.jp",
-#    install_requires=[
-#            'pathlib',
-#            'typing',
-#            'numpy',
-#            'scipy',
-#            'matplotlib',
-#        ],
+    install_requires=[
+            'docopt',
+            'pathlib',
+            'typing',
+            'numpy',
+            'scipy',
+            'matplotlib',
+        ],
     entry_points={
         'console_scripts':[
             #'bz = BZplot.BZ:BZplot_main',
