@@ -1,6 +1,7 @@
 # BZplot
 quantumESPRESSOやWannier90のinputからBrilluan zoneを3Dplotし、逆格子, kpathを表示する<br><br>
-![BZplot_sample](https://github.com/YudaiTerao/BZplot/assets/103988651/b9f19c1a-81b0-48b2-9ed6-98b62b49bdac)
+<img src="https://github.com/user-attachments/assets/2631d5be-d202-4b08-8f7b-25b901cf6475" width="47.2%" align="top" />
+<img src="https://github.com/user-attachments/assets/9e2822b5-6e30-48be-95c8-6a76968e7347" width="45%"  align="top"/>
 ## Install
   installしたい場所で
   ```
@@ -30,10 +31,12 @@ quantumESPRESSOやWannier90のinputからBrilluan zoneを3Dplotし、逆格子, 
   のコマンドで実空間のunit cellをmatplotlibで出力します。
   <br><br><br>
   ### -- Options --
+  -h&ensp;  :&ensp;&ensp;  オプション情報の出力<br>
   -p|--nokpath&ensp; :&ensp;&ensp;  kpathを表示しない<br>
   -v|--nolcvec&ensp; :&ensp;&ensp;  逆格子を表示しない<br>
-  -a|--aspect&ensp;  :&ensp;&ensp;  BZのplot時にaspect比を揃える
-  <br><br><br>
+  -b|--nobackground&ensp;  :&ensp;&ensp;  gridなどの背景を表示しない<br>
+  -t|--vectext&ensp;  :&ensp;&ensp;  ベクトルのラベルや座標を表示しない<br>
+    <br><br><br>
 ### -- Tips --
 - `nscf.in`のkpathのラベルは下のように&ensp;!&ensp;以下に書かれたものが反映されます。
 ```
