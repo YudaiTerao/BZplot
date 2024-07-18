@@ -459,7 +459,6 @@ def lcvec_plot(ax, cell, lbl_center=False):
             ax.text(vec[0], vec[1], vec[2], \
             "   b{0},[{1[0]:.2f},{1[1]:.2f},{1[2]:.2f}]".format(i+1,vec))
 
-
 def kpath_plot(ax, kpath: np.ndarray, kpath_name=[]):
     ax.plot(kpath[:, 0], kpath[:, 1], kpath[:, 2], color='red', lw=1.2)
     for i, kp in enumerate(kpath):

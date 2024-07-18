@@ -1,21 +1,14 @@
 &TB_FILE
-    Hrfile = 'CrFeS2_S_hr.dat'
     Package = 'QE'
 /
 
 &CONTROL
-    BerryCurvature_calc = T
 /
 
 &SYSTEM
-    NumOccupied = 22         ! NumOccupied
-    SOC = 1                  ! soc true
-    E_FERMI = 12.8385        ! e-fermi
 /
 
 &PARAMETERS
-    Nk1 = 101             ! number k points 
-    Nk2 = 101             ! number k points 
 /
 
 LATTICE
