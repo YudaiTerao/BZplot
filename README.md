@@ -3,15 +3,13 @@ quantumESPRESSOやWannier90, WannierToolsのinputからBrilluan zoneや結晶構
 <img src="https://github.com/user-attachments/assets/2631d5be-d202-4b08-8f7b-25b901cf6475" width="37.2%" align="top" />
 <img src="https://github.com/user-attachments/assets/9e2822b5-6e30-48be-95c8-6a76968e7347" width="35.5%"  align="top"/>
 # Install
-  インストールしたい場所で以下のコマンドを打つことでインストールできる<br><br>
+  インストールしたい場所で以下のコマンドを打つことでインストールできる
   ```
   git clone https://github.com/YudaiTerao/BZplot.git
   pip install ./BZplot
   ```
   必要なパッケージはsetup.pyのコメント内に書いてあるが、自動的にダウンロードしないようにしている。(anaconda環境などとの競合を避けるため。コメントを外せば自動的にpipでダウンロードされる)<br>
-  このため環境に合わせて足りないパッケージは導入する必要がある。
-  
-　アンインストールは
+  このため環境に合わせて足りないパッケージは導入する必要がある。<br>アンインストールは
   ```
   pip uninstall BZplot
   ```
@@ -40,7 +38,7 @@ quantumESPRESSOやWannier90, WannierToolsのinputからBrilluan zoneや結晶構
   - `BZplot.ballplot`<br>
   &ensp;球体をプロットする<br><br>
   ## Command
-  　インストールすると自動的に`bz`, `cell`コマンドが使えるようになる。<br>
+  インストールすると自動的に`bz`, `cell`コマンドが使えるようになる。<br>
   これらは引数にQuantumESPRESSOやWannier90, Wannier toolsのinput fileを与えると、拡張子からfileを判別して読みこみ、  Brilluan zoneや結晶構造, kpath, 計算領域を出力する。<br>
   実行コマンドの例は以下の通り.
   ```
@@ -55,14 +53,17 @@ quantumESPRESSOやWannier90, WannierToolsのinputからBrilluan zoneや結晶構
   &ensp;&ensp;`.in` :&ensp;WannierToolsのinputと判別<br>
 　<br>
   ### Options
-  コマンドのoptionは以下の通り。<br>
+  コマンドのオプションは以下の通り。<br><br>
   &ensp;&ensp;`-h`&ensp;  :&ensp;&ensp;  オプション情報の出力<br>
   &ensp;&ensp;`-p|--nokpath`&ensp; :&ensp;&ensp;  kpathを表示しない<br>
   &ensp;&ensp;`-v|--nolcvec`&ensp; :&ensp;&ensp;  逆格子を表示しない<br>
   &ensp;&ensp;`-b|--nobackground`&ensp;  :&ensp;&ensp;  gridなどの背景を表示しない<br>
   &ensp;&ensp;`-t|--vectext`&ensp;  :&ensp;&ensp;  ベクトルのラベルや座標を表示しない<br>
   
-  &ensp;&ensp;`-x　<xbd>`, `-y <ybd>`, `-z <zbd>`&ensp;  :&ensp;&ensp;  cellコマンド専用, 各軸方向に表示する単位胞の数を指定する。カンマで区切り、最小値と最大値を指定する。defaultはすべて0,1で、この場合単位胞は一つだけ出力される。
+  &ensp;&ensp;`-x　<xbd>`, `-y <ybd>`, `-z <zbd>`&ensp;  :<br>
+  &ensp;&ensp;&ensp;&ensp;`cell`専用オプション, 各軸方向に表示する単位胞の数を指定する。<br>
+  &ensp;&ensp;&ensp;&ensp;カンマで区切り、最小値と最大値を指定する。<br>
+  &ensp;&ensp;&ensp;&ensp;defaultはすべて0,1で、この場合単位胞は一つだけ出力される。
   <br><br>
   実行コマンドの例は以下の通り.
   ```
