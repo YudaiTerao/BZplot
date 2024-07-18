@@ -1,5 +1,5 @@
 # BZplot
-quantumESPRESSOやWannier90のinputからBrilluan zoneを3Dplotし、逆格子, kpathを表示する<br><br>
+quantumESPRESSOやWannier90, WannierToolsのinputからBrilluan zoneや結晶構造を三次元でプロットする<br><br>
 <img src="https://github.com/user-attachments/assets/2631d5be-d202-4b08-8f7b-25b901cf6475" width="47.2%" align="top" />
 <img src="https://github.com/user-attachments/assets/9e2822b5-6e30-48be-95c8-6a76968e7347" width="45%"  align="top"/>
 ## Install
