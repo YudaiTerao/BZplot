@@ -58,7 +58,7 @@ quantumESPRESSOやWannier90, WannierToolsのinputからBrilluan zoneや結晶構
   具体的には次のように判別される。<br>
   &ensp;&ensp;`.scf.in`, `.nscf.in` :&ensp;QuantumESPRESSOのinputと判別<br>
   &ensp;&ensp;`.win` :&ensp;Wannier90のinputと判別<br>
-  &ensp;&ensp;`.in` :&ensp;WannierToolsのinputと判別<br>
+  &ensp;&ensp;`wt.in` :&ensp;WannierToolsのinputと判別<br>
 　<br>
   ### Options
   コマンドのオプションは以下の通り。<br><br>
