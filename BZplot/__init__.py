@@ -2,6 +2,7 @@
 from BZplot.read_input import ibravcell
 from BZplot.read_input import BZ_input
 from BZplot.bzplot import bz_plot
+from BZplot.bzplot import adjust_aspect
 from BZplot.bzplot import get_brillouin_zone_3d
 from BZplot.bzplot import lcvec_plot
 from BZplot.bzplot import kpath_plot
