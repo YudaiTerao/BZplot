@@ -1,0 +1,11 @@
+
+ ibrav = 4
+! A = 5.00
+! C = 3.00
+celldm(1) = 5.00
+celldm(3) = 4.00
+ nat = 2
+
+ATOMIC_POSITIONS {crystal}
+C 0.00        0.00        0.00
+C 0.33333333  0.66666667  0.00

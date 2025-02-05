@@ -1,0 +1,15 @@
+
+ ibrav = 5
+ A = 5.0
+! 角度はcosAB,cosAC,cosBC,celldm(4)のいずれか一つで指定
+ cosAB = 0.5
+!cosAC = 0.5
+!cosBC = 0.5
+!celldm(1) = 5
+!celldm(4) = 0.5
+ nat = 2
+
+ATOMIC_POSITIONS {crystal}
+C 0.00        0.00        0.00
+C 0.33333333  0.66666667  0.00
+

@@ -270,14 +270,15 @@ class BZ_input:
         """
         ibrav = 200
         A, B, C, cosAB, cosAC, cosBC = -1, -1, -1, -2, -2, -2
-        celldm4, celldm5, celldm6 = -2, -2, -2
+        celldm1, celldm2, celldm3, celldm4, celldm5, celldm6 = -2, -2, -2, -2, -2, -2
         kpath, atom_frac = np.empty(0), np.empty(0)
         kpath_name, atom_name = [], []
         BZ_base, kp_method = "", ""
 
         with open(nscf_in_path, 'r') as fn:
             #改行,行頭行末スペース,行末のカンマ,コロン,タブ,コメント行を消去
-            lines = [ re.sub('^!.*$', '', re.sub('^\s+', '', re.sub('[\,\.]?\s+$', '', l))) for l in fn.readlines() ]
+            lines_with_comment = [ re.sub('^!.*$', '', re.sub('^\s+', '', re.sub('[\,\.]?\s+$', '', l))) for l in fn.readlines() ]
+            lines = [ l.split('!')[0] for l in lines_with_comment ]
 
         for i, line in enumerate(lines):
             # lwはlineを小文字に統一し、コメント,空白を削除したもの
@@ -299,12 +300,11 @@ class BZ_input:
             elif re.match(r'^cosbc=-?[0-9]+\.?[0-9]*$', lw):
                 cosBC = float(line.split("=")[1])
             elif re.match(r'^celldm\(1\)=-?[0-9]+\.?[0-9]*$', lw):
-
-                A = bohrang(float(line.split("=")[1]))
+                celldm1 = float(line.split("=")[1])
             elif re.match(r'^celldm\(2\)=-?[0-9]+\.?[0-9]*$', lw):
-                B = bohrang(float(line.split("=")[1]))
+                celldm2 = float(line.split("=")[1])
             elif re.match(r'^celldm\(3\)=-?[0-9]+\.?[0-9]*$', lw):
-                C = bohrang(float(line.split("=")[1]))
+                celldm3 = float(line.split("=")[1])
             elif re.match(r'^celldm\(4\)=-?[0-9]+\.?[0-9]*$', lw):
                 celldm4 = float(line.split("=")[1])
             elif re.match(r'^celldm\(5\)=-?[0-9]+\.?[0-9]*$', lw):
@@ -327,12 +327,20 @@ class BZ_input:
                     kp_num = int(lines[i+1])
                     kpath = np.array([ l.split()[:3] for l in lines[i+2:i+2+kp_num] ], dtype=np.float64)
                     for j in range(i+2, i+2+kp_num):
-                        if len(lines[j].split('!')) == 2:
-                            kpath_name.append(lines[j].split('!')[1])
+                        if len(lines_[j].split('!')) == 2:
+                            kpath_name.append(lines_with_comment[j].split('!')[1])
 
         #----- cellの単位変更 -----#
         #cell : 実空間の基底ベクトル,単位はangstromに統一
         #cellに関する部分は必ず出力に必要なため、errorの条件分岐を書いている
+        if celldm1 != -2: A = bohrang(celldm1)
+        if celldm2 != -2: 
+            assert celldm1 != -2, "celldm(1) not found"
+            B = A * celldm2
+        if celldm3 != -2: 
+            assert celldm1 != -2, "celldm(1) not found"
+            C = A * celldm3
+
         if ibrav in [0]:
             if 'alat' in BZ_base: 
                 if A <= 0 or not (B == C == -1 \

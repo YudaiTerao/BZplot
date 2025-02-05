@@ -120,7 +120,7 @@ class bzplot_cmd():
         #--- figとaxesの作成 ---#
         fig = plt.figure(figsize=(cminch(20),cminch(20)))
         ax = fig.add_axes([ 0.05, 0.05, 0.9, 0.9], projection='3d')
-        print("lattice vectors:")
+        print("lattice vectors (Ang):")
         for cl in bz.cell.tolist():
             print("[{0[0]:>10.6f},{0[1]:>10.6f}, {0[2]:>10.6f} ]".format(cl))
         print('')

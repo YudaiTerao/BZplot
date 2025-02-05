@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="BZplot",
-    version="2.0.0",
+    version="2.0.2",
     author="Yudai Terao",
     author_email="terao.yudai.s4@dc.tohoku.ac.jp",
 #    install_requires=[

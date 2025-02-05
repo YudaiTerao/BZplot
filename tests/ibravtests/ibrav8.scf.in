@@ -1,0 +1,13 @@
+
+ ibrav = 8
+ A = 5.0990
+ B = 3.2510
+ C = 5.6950
+!celldm(1) = 5
+!celldm(4) = 0.5
+ nat = 2
+
+ATOMIC_POSITIONS {crystal}
+Fe 0.00150  0.25  0.20070
+P  0.19260  0.25  0.57750
+
