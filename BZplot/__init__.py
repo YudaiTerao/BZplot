@@ -14,4 +14,3 @@ from BZplot.bzplot import ballplot
 from BZplot.bzcell_exe import bzplot_cmd
 
 
-__version__='2.0.2'

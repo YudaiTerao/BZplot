@@ -1,5 +1,5 @@
 
- ibrav = 5
+ ibrav = -5
  A = 5.0
 ! 角度はcosAB,cosAC,cosBC,celldm(4)のいずれか一つで指定
  cosAB = 0

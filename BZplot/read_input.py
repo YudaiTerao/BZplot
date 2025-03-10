@@ -70,13 +70,14 @@ def ibravcell(
                          [   0,            0, C/A]]) * A
     # Trigonal R, 3fold axis c
     elif ibrav == 5:
-        if A <= 0 or not B == C == -1: _ibravError()
-        if 0 < cosAB < 1 and ( cosAC == -2 or cosAC == cosAB) \
+        if A <= 0 or not B == -1: _ibravError()
+        if 0 <= cosAB < 1 and ( cosAC == -2 or cosAC == cosAB) \
                          and ( cosBC == -2 or cosBC == cosAB):cosG = cosAB
-        elif 0 < cosAC < 1 and ( cosAB == -2 or cosAB == cosAC) \
+        elif 0 <= cosAC < 1 and ( cosAB == -2 or cosAB == cosAC) \
                            and ( cosBC == -2 or cosBC == cosAC):cosG = cosAC
-        elif 0 < cosBC < 1 and ( cosAB == -2 or cosAB == cosBC) \
+        elif 0 <= cosBC < 1 and ( cosAB == -2 or cosAB == cosBC) \
                            and ( cosAC == -2 or cosAC == cosBC):cosG = cosBC
+        elif 0 <= C < 1 :cosG = C
         else: _ibravError()
         tx = np.sqrt((1 - cosG)/2)
         ty = np.sqrt((1 - cosG)/6)
@@ -86,13 +87,14 @@ def ibravcell(
                          [ -tx,    -ty,  tz]]) * A
     # Trigonal R, 3fold axis <111>
     elif ibrav == -5:
-        if A <= 0 or not B == C == -1: _ibravError()
-        if 0 < cosAB < 1 and ( cosAC == -2 or cosAC == cosAB) \
+        if A <= 0 or not B == -1: _ibravError()
+        if 0 <= cosAB < 1 and ( cosAC == -2 or cosAC == cosAB) \
                          and ( cosBC == -2 or cosBC == cosAB):cosG = cosAB
-        elif 0 < cosAC < 1 and ( cosAB == -2 or cosAB == cosAC) \
+        elif 0 <= cosAC < 1 and ( cosAB == -2 or cosAB == cosAC) \
                            and ( cosBC == -2 or cosBC == cosAC):cosG = cosAC
-        elif 0 < cosBC < 1 and ( cosAB == -2 or cosAB == cosBC) \
+        elif 0 <= cosBC < 1 and ( cosAB == -2 or cosAB == cosBC) \
                            and ( cosAC == -2 or cosAC == cosBC):cosG = cosBC
+        elif 0 <= C < 1 :cosG = C
         else: _ibravError()
         tx = np.sqrt((1 - cosG)/2)
         ty = np.sqrt((1 - cosG)/6)
