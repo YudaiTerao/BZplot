@@ -329,7 +329,7 @@ class BZ_input:
                     kp_num = int(lines[i+1])
                     kpath = np.array([ l.split()[:3] for l in lines[i+2:i+2+kp_num] ], dtype=np.float64)
                     for j in range(i+2, i+2+kp_num):
-                        if len(lines_[j].split('!')) == 2:
+                        if len(lines[j].split('!')) == 2:
                             kpath_name.append(lines_with_comment[j].split('!')[1])
 
         #----- cellの単位変更 -----#
